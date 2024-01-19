@@ -14,13 +14,6 @@ red_mask_g_high = 90;
 red_mask_b_low = 50;
 red_mask_b_high = 90;
 
-green_mask_r_low = 10;
-green_mask_r_high = 100;
-green_mask_g_low = 10;
-green_mask_g_high = 150;
-green_mask_b_low = 10;
-green_mask_b_high = 150;
-
 
 % Convert RGB image to chosen color space
 I = im;
@@ -50,3 +43,44 @@ maskedRGBImage = im;
 maskedRGBImage(repmat(~BW,[1 1 3])) = 0;
 
 idisp(maskedRGBImage)
+
+
+%Filtering properties
+green_mask_r_low = 60;
+green_mask_r_high = 110;
+green_mask_g_low = 60;
+green_mask_g_high = 150;
+green_mask_b_low = 60;
+green_mask_b_high = 150;
+
+
+
+% Convert RGB image to chosen color space
+I = im;
+
+% Define thresholds for channel 1 based on histogram settings
+channel1Min = green_mask_r_low;
+channel1Max = green_mask_r_high;
+
+% Define thresholds for channel 2 based on histogram settings
+channel2Min = green_mask_g_low;
+channel2Max = green_mask_g_high;
+
+% Define thresholds for channel 3 based on histogram settings
+channel3Min = green_mask_b_low;
+channel3Max = green_mask_b_high;
+
+% Create mask based on chosen histogram thresholds
+sliderBW = (I(:,:,1) >= channel1Min ) & (I(:,:,1) <= channel1Max) & ...
+    (I(:,:,2) >= channel2Min ) & (I(:,:,2) <= channel2Max) & ...
+    (I(:,:,3) >= channel3Min ) & (I(:,:,3) <= channel3Max);
+BW = sliderBW;
+
+% Initialize output masked image based on input image.
+maskedRGBImage = im;
+
+% Set background pixels where BW is false to zero.
+maskedRGBImage(repmat(~BW,[1 1 3])) = 0;
+
+idisp(maskedRGBImage)
+
