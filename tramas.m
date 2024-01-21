@@ -1,4 +1,16 @@
-function Tij = tramas(alpha, a, theta, d)
+syms L1 L2 L3 L4 L5 Leesym
+Lsym = [L1, L2, L3, L4, L5];
+L23sym = sqrt(L2^2 + L3^2);
+syms o1 o2 o3 o4 o5
+T01 = T(0, 0, o1, Lsym(1));
+T12 = T(pi/2, 0, o2, 0);
+T23 = T(0, L23sym, o3, 0);
+T34 = T(0, Lsym(4), o4 + pi/2, 0);
+T45 = T(pi/2, 0, o5, Lsym(5));
+T5ee = T(0, -Leesym, 0, 0);
+Peesym = T01*T12*T23*T34*T45*T5ee(:, 4);
+
+function Tij = T(alpha, a, theta, d)
     Tij = round_zeros(Rx(alpha)*Dx(a)*Rz(theta)*Dz(d));
 end
 
