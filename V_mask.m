@@ -46,11 +46,27 @@ Rblack=Rmon>0.9;
 
 % Aplicamos apertura y cierre para rellenar la linea
 
-closed_1 = iclose(Rblack, ones(2, 2));
-opened_1 = iopen(closed_1, ones(2, 2));
-linea_im = iclose(opened_1, kcircle(15));
+closed_1 = iclose(Rblack, ones(1, 1));
+opened_1 = iopen(closed_1, ones(3, 3));
+linea_im = iclose(opened_1, kcircle(20));
+
+edges = icanny(linea_im);
+
+
+h = Hough(edges, 'houghthresh', 0.1, 'suppress', 10);
+lines = h.lines();
+ 
+
+lines = lines.seglength(edges)
+k = find( lines.length > 40 & lines.length <= 50);
+
 
 idisp(linea_im)
+lines(k).plot('r')
+lines(k)
+
+
+
 
 
 %% Aplico la mascara VERDE
@@ -101,6 +117,29 @@ Gblack=Gmon>0.9;
 
 closed_1 = iclose(Gblack, ones(2, 2));
 opened_1 = iopen(closed_1, ones(2, 2));
-borde_im = iclose(opened_1, kcircle(15));
+borde_im = iclose(opened_1, kcircle(10));
+
+
+
+edges = icanny(borde_im);
+
+
+h = Hough(edges, 'houghthresh', 0.6, 'suppress', 10);
+lines = h.lines();
+ 
+
+
+lines = lines.seglength(edges);
+k = find( lines.length > 1 & lines.length <= 32);
+
 
 idisp(borde_im)
+lines(k).plot('r')
+lines(k)
+
+
+
+
+
+
+
