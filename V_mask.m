@@ -218,6 +218,75 @@ lines(k).plot('r')
 lines(k)
 
 
+%% Ahora buscamos las intersecciones
+
+valid_verteces = zeros(2,0);
+for i = 1:size(lines,2)
+    for j = i:size(lines,2)
+        line1 = lines(i);
+        line2 = lines(j);
+        theta1 = line1.theta;
+        theta2 = line2.theta;
+        rho1 = line1.rho;
+        rho2 = line2.rho;
+
+        A = [sin(theta1),cos(theta1);sin(theta2),cos(theta2)];
+        b = [rho1;rho2];
+        
+        if det(A) ~= 0
+            xy = A\b;
+            x = xy(1);
+            y = xy(2);
+            
+            
+            if x >= 1 && x <= size(borde_im,2) && y >= 1 && y <= size(borde_im,1)
+                valid_verteces = [valid_verteces,[x;y]];
+            end
+          
+        
+        end
+    end
+end
+
+disp(valid_verteces);
+[num_filas, num_columnas] = size(valid_verteces);
+
+filtered_corners = zeros(2,0);
+filtered_corners = [filtered_corners,[valid_verteces(1, 1);valid_verteces(2, 1)]];
+
+for j = 2:num_columnas
+    x = valid_verteces(1, j);
+    y = valid_verteces(2, j);
+    [num_filas2, num_columnas2] = size(filtered_corners);
+    for i = 1:num_columnas2
+        x_to_compare = filtered_corners(1, i);
+        y_to_compare = filtered_corners(2, i);
+
+        xx_to_compare = filtered_corners(1, end)
+        
+        if abs(x-x_to_compare) < 200 && abs(y-y_to_compare) <200
+            break;
+        else
+            filtered_corners = [filtered_corners,[x;y]];
+%             disp(abs(x-x_to_compare))
+%             disp(abs(y-y_to_compare))
+%             disp('-------------------')
+            break;
+        end
+           
+        
+    end
+    
+end
+
+
+idisp(borde_im)
+plot_point(filtered_corners,'o')
+
+
+% Filtro puntos
+
+
 
 
 
