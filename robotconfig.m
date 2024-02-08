@@ -22,8 +22,8 @@ zw = L(1) + L23*sin(o2) + L(4)*sin(o2+o3) + L(5)*sin(o2+o3+o4) - Lee*0.5*(cos(o2
 
 %% Test
 Robot = createRobot(L, Lee);%, qlim);
-q0 = [0 0 0 pi/2 0]; % Posicion inicial
-% Robot.teach(q0)
+q0 = [0 pi/2 -pi/2 pi/2 0]; % Posicion inicial
+Robot.teach(q0)
 % Robot.islimit(q0)
 
 %%% Test Workspace
@@ -33,43 +33,60 @@ q0 = [0 0 0 pi/2 0]; % Posicion inicial
 % hold off
 
 %% Test trajectorias
-table_start = [250, -100, L(1)];    % Posición del borde de la hoja (mm)
-table_end = [400, 100, L(1)];       % Posición en diagonal a la posición anterior
+table_start = [150, -100, 200];    % Posición del borde de la hoja (mm)
+table_end = [300, 100, 200];       % Posición en diagonal a la posición anterior
 r0 = [0, 0, 0];   % Posición inicial de recta (cm)
 rf = [15, 20, 0];    % Posición final de recta(cm)
-x0 = coor_table + r0*10
-xf = coor_table + rf*10
-t = 0:0.15:10;
-[x, xd, xdd] = jtraj(x0, xf, t);  %Calcula las componentes en cada periodo de tiempo
-T = transl(x);
+x0 = table_start + r0*10
+xf = table_start + rf*10
 
-% hipotenusa = sqrt(x0(1)^2 + x0(2)^2);
-% sinalpha = x0(2)/hipotenusa;
-% cosalpha = x0(1)/hipotenusa;
-% R0 = [cosalpha, -sinalpha,  0; 
-%       sinalpha, cosalpha,   0; 
-%       0,        0,          1];
-% %R0 = R0 * [0,0,-1; 0,1,0; 1,0,0];
-% T0 = [R0, x0'; 0, 0, 0, 1];
-% hipotenusa = sqrt(xf(1)^2 + xf(2)^2);
-% sinalpha = xf(2)/hipotenusa;
-% cosalpha = xf(1)/hipotenusa;
-% Rf = [cosalpha, -sinalpha,  0; 
-%       sinalpha, cosalpha,   0; 
-%       0,        0,          1];
-% %Rf = Rf * [0,0,-1; 0,1,0; 1,0,0];
-% Tf = [Rf, xf'; 0, 0, 0, 1];
-% 
-% T = ctraj(T0, Tf, 100);
-q_traj = Robot.ikine(T, 'q0', q0, 'mask',[1 1 1 0 0 0], 'noshort', 'pinv');
-% RECTÁNGULO
+h1 = sqrt(x0(2)^2 + x0(3)^2);
+h2 = sqrt(x0(1)^2 + x0(3)^2);
+h3 = sqrt(x0(1)^2 + x0(2)^2);
+T0 = transl(x0(1),x0(2),x0(3))*trotz(asin(x0(2)/h3)*180/pi)*troty(acos(x0(3)/h2)*180/pi);
+% Tf = T0;
+% Tf(:, 4) = [xf(1); xf(2); xf(3); 1]
+h1 = sqrt(xf(2)^2 + xf(3)^2);
+h2 = sqrt(xf(1)^2 + xf(3)^2);
+h3 = sqrt(xf(1)^2 + xf(2)^2);
+%Tf = transl(xf(1),xf(2),xf(3))*trotz((xf(2)/xf(1))*180/pi)*troty((xf(3)/xf(2))*180/pi);
+Tf = transl(xf(1),xf(2),xf(3))*trotz(asin(xf(2)/h3)*180/pi)*troty(acos(xf(3)/h2)*180/pi);
+
+%[x, xd, xdd] = jtraj(x0, xf, t);  %Calcula las componentes en cada periodo de tiempo
+% T1 = transl(x0)
+% T2 = transl(xf)
+% Q1 = Robot.ikine(T1, 'q0', q1, 'mask', [1 1 1 1 1 0])
+% q2 = [0.21, 41.6, -0.576, 1.408, 0]
+% Q2 = Robot.ikine(T2, 'q0', q2, 'mask', [1 1 1 1 1 0])
+% t = 0:0.15:10;
+% T1 = Robot.fkine(Q0);
+% T2 = Robot.fkine(Qf);
+%traj = jtraj(Q1, Q2, t);
+
+%q1 = [-0.312, 1.61, -1.8256, 1.8, 0];
+% T1 = Robot.fkine(q1);
+points = 50;
+Trot = ctraj(T0, Tf, points);
+% r = Trot(:, :, 1)
+% T = zeros(4, 4, points);
+% for i = 1:length(T)
+%     T(:, :, i) = [r(:, 1), r(:, 2), r(:, 3), Trot(:, 4, i)];
+% end
+traj = Robot.ikine(Tf, 'q0', q0, 'mask', [1 1 1 1 1 0])
+%[traj, err, exitflag] = Robot.ikcon(Trot, q1);
+
+% GRÁFICOS
+% Rectángulo
 xRectangulo = [table_start(1), table_end(1), table_end(1), table_start(1)];
 yRectangulo = [table_start(2), table_start(2), table_end(2), table_end(2)];
 zRectangulo = [table_start(3), table_start(3), table_start(3), table_start(3)];
 fill3(xRectangulo, yRectangulo, zRectangulo, 'g'); % color azul
-Robot.plot(q_traj)
+
+% Robot
+Robot.plot(traj)
 hold on
-% LINEA
+
+% Línea
 xline = linspace(x0(1), xf(1), 100);
 yline = linspace(x0(2), xf(2), 100);
 zline = linspace(x0(3), xf(3), 100);
