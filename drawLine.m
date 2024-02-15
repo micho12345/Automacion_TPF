@@ -15,9 +15,9 @@ function drawLine(Robot, r0, rf, table_start, table_end, z_offset, q0)
     drawRectangle(table_start, table_end)
 
     % Robot
-    Robot.plot(q1)
-    Robot.plot(q2)
-    Robot.plot(q3)
+    Robot.plot(q1, 'trail', '--b')
+    Robot.plot(q2, 'trail', '--b')
+    Robot.plot(q3, 'trail', '--b')
     hold on
 
     % Línea
