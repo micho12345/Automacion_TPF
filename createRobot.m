@@ -4,11 +4,15 @@
         % Lee: la longitud entre el último link y el end effector (escalar)
         % qlim: los límites angulares de cada actuador (arreglo de celdas 5x2)
         
-function [Robot] = createRobot(L, Lee, qlim)
+function [Robot] = createRobot(L, Lee, tol)
 
     N = 4;  % Cantidad de links
     % Tipos de link
     types = {'revolute', 'revolute', 'revolute', 'revolute'};
+    for i = 1:length(L)
+        L(i) = L(i)*(1 + tol*rand(1));
+    end
+    L
     L23 = sqrt(L(2)^2 + L(3)^2);
     
     % Parametros DH [[theta, d, a, alpha]]

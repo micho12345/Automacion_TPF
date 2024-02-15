@@ -11,8 +11,8 @@ clc
 
 % Longitudes en mm
 L = [130, 144, 50, 144, 144];
-L23 = sqrt(L(2)^2 + L(3)^2);
 Lee = 100;
+Ltol = 0;
 
 % Mesa de trabajo
 table_start = [210, -100, 180];    % Posición del borde de la hoja (mm)
@@ -20,7 +20,7 @@ table_end = [360, 100, 180];       % Posición en diagonal a la posición anterior
 table_size = [150, 200];           % Tamaño de la hoja
 
 %% Crear manipulador
-Robot = createRobot(L, Lee);
+Robot = createRobot(L, Lee, Ltol);
 q0 = deg2rad([0 90 -90 0]);    % Posicion inicial
 Robot.teach(q0)
 
