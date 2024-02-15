@@ -10,7 +10,7 @@ function [Robot] = createRobot(L, Lee, tol)
     % Tipos de link
     types = {'revolute', 'revolute', 'revolute', 'revolute'};
     for i = 1:length(L)
-        L(i) = L(i)*(1 + tol*rand(1));
+        L(i) = L(i)*(1 + randsign()*tol*rand(1));
     end
     L
     L23 = sqrt(L(2)^2 + L(3)^2);
@@ -33,4 +33,12 @@ function [Robot] = createRobot(L, Lee, tol)
     Tool = [Rtool, Ttool; 0 0 0 1];
     Robot = SerialLink([links{:}], 'tool', Tool, 'name', 'Pacho Norras');
     
+end
+
+function r = randsign()
+    if rand(1) > 0.5
+        r = 1;
+    else
+        r = -1;
+    end
 end

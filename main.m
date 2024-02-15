@@ -22,6 +22,7 @@ table_size = [150, 200];           % Tamaño de la hoja
 %% Crear manipulador
 Robot = createRobot(L, Lee, Ltol);
 q0 = deg2rad([0 90 -90 0]);    % Posicion inicial
+drawRectangle(table_start, table_end)
 Robot.teach(q0)
 
 %% Espacio de trabajo
